@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:6504/",
+      "applicationUrl": "http://localhost:6708/",
       "sslPort": 0
     }
   },
@@ -15,13 +15,13 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "XO.Web": {
+    "XO.Web.Server": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:6505/"
+      "applicationUrl": "http://localhost:6710/"
     }
   }
 }
