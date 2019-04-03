@@ -1,5 +1,7 @@
 # Instructions
 
+[![Build Status](https://jannemattila.visualstudio.com/jannemattila/_apis/build/status/JanneMattila.XOBlazor)](https://jannemattila.visualstudio.com/jannemattila/_build/latest?definitionId=31)
+
 ## Working with 'XO Blazor'
 
 ### How to create image locally
