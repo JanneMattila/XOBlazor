@@ -5,15 +5,15 @@ WORKDIR /source
 
 # Cache nuget restore
 COPY /src/XO/*.csproj XO/
-COPY /src/XO.App/*.csproj XO.App/
-RUN dotnet restore XO.App/XO.App.csproj
+COPY /src/XO.Web/*.csproj XO.Web/
+RUN dotnet restore XO.Web/XO.Web.csproj
 
 # Copy sources and compile
 COPY /src .
-WORKDIR /source/XO.App
-RUN dotnet publish XO.App.csproj --output /app/ --configuration Release
+WORKDIR /source/XO.Web
+RUN dotnet publish XO.Web.csproj --output /app/ --configuration Release
 
-RUN ls -lF /app/XO.App/dist
+RUN ls -lF /app/XO.Web/dist
 
 # 2. Release image (https://hub.docker.com/_/nginx)
 FROM nginx:1.15.12-alpine
@@ -23,4 +23,4 @@ EXPOSE 80
 EXPOSE 443
 
 # Copy content from Build image
-COPY --from=build /app/XO.App/dist .
+COPY --from=build /app/XO.Web/dist .
