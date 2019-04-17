@@ -6,6 +6,9 @@
 pool:
   vmImage: 'Ubuntu 16.04'
 
+trigger:
+- master
+
 variables:
   imageName: 'jannemattila/xoblazor:$(Build.BuildNumber)'
 

@@ -6,6 +6,9 @@
 pool:
   vmImage: 'Ubuntu 16.04'
 
+pr:
+- master
+
 name: PR-$(Rev:r)
 steps:
 - task: Docker@1
