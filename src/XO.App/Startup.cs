@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace XO.Web.Client
+namespace XO.App
 {
     public class Startup
     {

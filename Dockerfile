@@ -5,22 +5,22 @@ WORKDIR /source
 
 # Cache nuget restore
 COPY /src/XO/*.csproj XO/
-COPY /src/XO.Web.Client/*.csproj XO.Web.Client/
-COPY /src/XO.Web.Server/*.csproj XO.Web.Server/
-COPY /src/XO.Web.Shared/*.csproj XO.Web.Shared/
-RUN dotnet restore XO.Web.Server/XO.Web.Server.csproj
+COPY /src/XO.App/*.csproj XO.App/
+RUN dotnet restore XO.App/XO.App.csproj
 
 # Copy sources and compile
 COPY /src .
-WORKDIR /source/XO.Web.Server
-RUN dotnet publish XO.Web.Server.csproj --output /app/ --configuration Release
+WORKDIR /source/XO.App
+RUN dotnet publish XO.App.csproj --output /app/ --configuration Release
+
+RUN ls -lF /app/XO.App/dist
 
 # 2. Release image
-FROM mcr.microsoft.com/dotnet/core-nightly/aspnet:3.0.0-preview4-alpine3.9
-WORKDIR /app
+FROM nginx:1.15.12-alpine
+WORKDIR /usr/share/nginx/html/
+
 EXPOSE 80
+EXPOSE 443
 
 # Copy content from Build image
-COPY --from=build /app .
-
-ENTRYPOINT ["dotnet", "XO.Web.Server.dll"]
+COPY --from=build /app/XO.App/dist .
