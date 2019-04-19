@@ -13,8 +13,6 @@ COPY /src .
 WORKDIR /source/XO.Web
 RUN dotnet publish XO.Web.csproj --output /app/ --configuration Release
 
-RUN ls -lF /app/XO.Web/dist
-
 # 2. Release image (https://hub.docker.com/_/nginx)
 FROM nginx:1.15.12-alpine
 WORKDIR /usr/share/nginx/html/
