@@ -1,0 +1,35 @@
+﻿@page "/Play/{GameID}"
+@inject IJSRuntime JSRuntime
+
+<canvas id="canvas" ref="_canvas" width="450" height="450"></canvas>
+
+@functions 
+{
+    [Parameter]
+    string GameID { get; set; }
+
+    bool _loaded = false;
+
+    static ElementRef _canvas;
+
+    protected override Task OnInitAsync()
+    {
+        return base.OnInitAsync();
+    }
+
+    public override Task SetParametersAsync(ParameterCollection parameters)
+    {
+        return base.SetParametersAsync(parameters);
+    }
+
+    protected override async Task OnAfterRenderAsync()
+    {
+        await base.OnAfterRenderAsync();
+        if (!_loaded)
+        {
+            _loaded = true;
+            await JSRuntime.InvokeAsync<object>("initializeView", _canvas);
+            await JSRuntime.InvokeAsync<object>("draw");
+        }
+    }
+}
