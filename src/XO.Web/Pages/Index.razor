@@ -9,6 +9,6 @@
     private void NavigateToGame()
     {
         var random = new Random();
-        UriHelper.NavigateTo($"/Play/{random.Next(1,1000)}");
+        UriHelper.NavigateTo($"Play?id={random.Next(1,1000)}");
     }
 }
