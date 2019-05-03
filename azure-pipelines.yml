@@ -11,19 +11,48 @@ trigger:
 
 variables:
   imageName: 'jannemattila/xoblazor:$(Build.BuildNumber)'
+  BuildConfiguration: 'Release'
 
 name: 1.0.$(Rev:r)
 steps:
-- task: Docker@1
-  displayName: 'Build an image'
+- task: DotNetCoreInstaller@0
+  displayName: 'Use .NET Core sdk 3.0.100-preview4-011223'
   inputs:
-    imageName: $(imageName)
-    includeLatestTag: true
-- task: Docker@1
-  displayName: 'Push an image'
+    version: '3.0.100-preview4-011223'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
   inputs:
-    containerregistrytype: 'Container Registry'
-    dockerRegistryEndpoint: DockerHub
-    command: 'Push an image'
-    imageName: $(imageName)
-    includeLatestTag: true
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish'
+  inputs:
+    command: publish
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    modifyOutputPath: false
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: app'
+  inputs:
+    ArtifactName: app
+
+#- task: Docker@1
+#  displayName: 'Build an image'
+#  inputs:
+#    imageName: $(imageName)
+#    includeLatestTag: true
+#- task: Docker@1
+#  displayName: 'Push an image'
+#  inputs:
+#    containerregistrytype: 'Container Registry'
+#    dockerRegistryEndpoint: DockerHub
+#    command: 'Push an image'
+#    imageName: $(imageName)
+#    includeLatestTag: true
+#
