@@ -1,21 +1,81 @@
 ﻿console.log("PlayView.js loaded");
 
-let _canvasElement: HTMLCanvasElement;
+let _canvas: HTMLCanvasElement;
 let _context: CanvasRenderingContext2D;
+
 let _size = 20;
+let _dragging = 0;
+let _mouseDown = false;
+let _lastX = 0;
+let _lastY = 0;
+let _currentMouseX = 0;
+let _currentMouseY = 0;
+let _marginLeft = 0;
+let _marginTop = 0;
 
 window.addEventListener('resize', function () {
     console.log("PlayView.js resize");
+
+    _dragging = 0;
+    _marginLeft = 0;
+    _marginTop = 0;
+    _currentMouseX = -1;
+    _currentMouseY = -1;
 }, false);
 
-function initializeView(canvasElement: HTMLCanvasElement) {
-    console.log("PlayView.js initializeView");
+window.addEventListener('mousemove', function (e) {
 
-    _canvasElement = canvasElement;
-    _context = _canvasElement.getContext("2d");
+    const calcDeltaX = e.clientX - _lastX;
+    const calcDeltaY = e.clientY - _lastY;
+    const moveRadius = Math.sqrt(calcDeltaX * calcDeltaX + calcDeltaY * calcDeltaY);
+
+    if (_dragging == 1 && moveRadius > 25) {
+        _dragging = 2;
+        console.log("Mouse move");
+    }
+
+    if (_dragging == 2) {
+        const deltaX = e.clientX - _lastX;
+        const deltaY = e.clientY - _lastY;
+        _lastX = e.clientX;
+        _lastY = e.clientY;
+        _marginLeft += deltaX;
+        _marginTop += deltaY;
+        _canvas.style.marginLeft = _marginLeft + "px";
+        _canvas.style.marginTop = _marginTop + "px";
+    }
+    e.preventDefault();
+
+    _currentMouseX = e.clientX;
+    _currentMouseY = e.clientY;
+
+    draw();
+}, false);
+
+window.addEventListener('mouseup', function (e) {
+
+    console.log("Mouse up");
+
+    _dragging = 0;
+    _mouseDown = false;
+}, false);
+
+function initializeView(canvas: HTMLCanvasElement) {
+    console.log("PlayView.js initializeView");
+    _canvas = canvas;
+    _context = _canvas.getContext("2d");
     _context.font = "14pt Arial";
 
-    _canvasElement.addEventListener("click", (event: MouseEvent) => {
+    _canvas.addEventListener('mousedown', function (e) {
+        console.log("Mouse down");
+        _dragging = 1;
+        _mouseDown = true;
+        _lastX = e.clientX;
+        _lastY = e.clientY;
+        e.preventDefault();
+    }, false);
+
+    _canvas.addEventListener("click", (event: MouseEvent) => {
         //calculatePosition(event);
     });
 }
@@ -23,7 +83,7 @@ function initializeView(canvasElement: HTMLCanvasElement) {
 function draw() {
     console.log("PlayView.js draw");
 
-    _context.clearRect(0, 0, _canvasElement.width, _canvasElement.height);
+    _context.clearRect(0, 0, _canvas.width, _canvas.height);
 
     const pieceWidth = 45;
     const pieceHeight = 45;
