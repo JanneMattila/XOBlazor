@@ -13,8 +13,15 @@ let _currentMouseY = 0;
 let _marginLeft = 0;
 let _marginTop = 0;
 
+let _images: HTMLImageElement[] = [];
+let _board: Int8Array[] = [];
+let _currentPlayer = "x";
+
 window.addEventListener('resize', function () {
     console.log("PlayView.js resize");
+
+    _canvas.style.marginLeft = "0px";
+    _canvas.style.marginTop = "0px";
 
     _dragging = 0;
     _marginLeft = 0;
@@ -60,6 +67,25 @@ window.addEventListener('mouseup', function (e) {
     _mouseDown = false;
 }, false);
 
+function loadImages() {
+    let imagesLoaded = 0;
+    const path = "images/";
+    const imageFiles = ["x.svg", "x_shadow.svg", "o.svg", "o_shadow.svg"];
+    for (let i = 0; i < imageFiles.length; i++) {
+        _images[i] = new Image();
+        _images[i].onload = function () {
+            imagesLoaded++;
+
+            if (imagesLoaded === imageFiles.length) {
+                draw();
+            }
+        };
+        _images[i].src = path + imageFiles[i];
+    }
+}
+
+loadImages();
+
 function initializeView(canvas: HTMLCanvasElement) {
     console.log("PlayView.js initializeView");
     _canvas = canvas;
@@ -82,6 +108,9 @@ function initializeView(canvas: HTMLCanvasElement) {
 
 function draw() {
     console.log("PlayView.js draw");
+    if (_context == null) {
+        return;
+    }
 
     _context.clearRect(0, 0, _canvas.width, _canvas.height);
 
@@ -110,6 +139,18 @@ function draw() {
             const x = column * pieceWidth;
             const y = row * pieceHeight;
             const index = _size * row + column;
+
+            if (_dragging == 0 &&
+                x >= _currentMouseX - _canvas.offsetLeft - pieceWidth && x < _currentMouseX - _canvas.offsetLeft &&
+                y >= _currentMouseY - _canvas.offsetTop - pieceHeight && y < _currentMouseY - _canvas.offsetTop) {
+
+                if (_currentPlayer === "x") {
+                    _context.drawImage(_images[1], 7 + x, 7 + y);
+                }
+                else {
+                    _context.drawImage(_images[3], 9 + x, 8 + y);
+                }
+            }
         }
     }
 }

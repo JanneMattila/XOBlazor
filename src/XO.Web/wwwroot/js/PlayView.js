@@ -10,8 +10,13 @@ var _currentMouseX = 0;
 var _currentMouseY = 0;
 var _marginLeft = 0;
 var _marginTop = 0;
+var _images = [];
+var _board = [];
+var _currentPlayer = "x";
 window.addEventListener('resize', function () {
     console.log("PlayView.js resize");
+    _canvas.style.marginLeft = "0px";
+    _canvas.style.marginTop = "0px";
     _dragging = 0;
     _marginLeft = 0;
     _marginTop = 0;
@@ -46,6 +51,22 @@ window.addEventListener('mouseup', function (e) {
     _dragging = 0;
     _mouseDown = false;
 }, false);
+function loadImages() {
+    var imagesLoaded = 0;
+    var path = "images/";
+    var imageFiles = ["x.svg", "x_shadow.svg", "o.svg", "o_shadow.svg"];
+    for (var i = 0; i < imageFiles.length; i++) {
+        _images[i] = new Image();
+        _images[i].onload = function () {
+            imagesLoaded++;
+            if (imagesLoaded === imageFiles.length) {
+                draw();
+            }
+        };
+        _images[i].src = path + imageFiles[i];
+    }
+}
+loadImages();
 function initializeView(canvas) {
     console.log("PlayView.js initializeView");
     _canvas = canvas;
@@ -65,6 +86,9 @@ function initializeView(canvas) {
 }
 function draw() {
     console.log("PlayView.js draw");
+    if (_context == null) {
+        return;
+    }
     _context.clearRect(0, 0, _canvas.width, _canvas.height);
     var pieceWidth = 45;
     var pieceHeight = 45;
@@ -87,6 +111,16 @@ function draw() {
             var x = column * pieceWidth;
             var y = row * pieceHeight;
             var index = _size * row + column;
+            if (_dragging == 0 &&
+                x >= _currentMouseX - _canvas.offsetLeft - pieceWidth && x < _currentMouseX - _canvas.offsetLeft &&
+                y >= _currentMouseY - _canvas.offsetTop - pieceHeight && y < _currentMouseY - _canvas.offsetTop) {
+                if (_currentPlayer === "x") {
+                    _context.drawImage(_images[1], 7 + x, 7 + y);
+                }
+                else {
+                    _context.drawImage(_images[3], 9 + x, 8 + y);
+                }
+            }
         }
     }
 }
