@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{A4477955-B4A
 		.gitignore = .gitignore
 		global.json = global.json
 		LICENSE = LICENSE
+		doc\Misc.md = doc\Misc.md
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -32,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XO", "src\XO\XO.csproj", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XO.Tests", "test\unit\XO.Tests\XO.Tests.csproj", "{8FFA9892-33E5-4CAB-9AD7-57CC6E7853BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XO.Web", "src\XO.Web\XO.Web.csproj", "{C4FA8CCC-7E3A-43B6-A482-9EACF17EAAA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XO.Web", "src\XO.Web\XO.Web.csproj", "{C4FA8CCC-7E3A-43B6-A482-9EACF17EAAA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

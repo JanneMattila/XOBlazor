@@ -2,6 +2,12 @@
 
 [![Build Status](https://jannemattila.visualstudio.com/jannemattila/_apis/build/status/JanneMattila.XOBlazor)](https://jannemattila.visualstudio.com/jannemattila/_build/latest?definitionId=615)
 
+## Try this yourself
+
+This app is deployed to GitHub Pages. So try it our yourself!
+
+[Run from GitHub Pages](https://jannemattila.github.io/XOBlazorApp/)
+
 ## Working with 'XO Blazor'
 
 ### How to create image locally
