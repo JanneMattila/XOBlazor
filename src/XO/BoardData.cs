@@ -39,6 +39,11 @@ namespace XO
         /// </summary>
         public string Board { get; set; }
 
+        /// <summary>
+        /// Gets or sets board as array.
+        /// </summary>
+        public Piece[][] Data { get; set; }
+
         public List<int> Moves { get; set; }
 
         public List<int> WinningStraight { get; set; }

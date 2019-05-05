@@ -12,9 +12,21 @@
 
     static ElementRef _canvas;
 
-    protected override Task OnInitAsync()
+    static GameEngine _gameEngine;
+
+
+    protected override async Task OnInitAsync()
     {
-        return base.OnInitAsync();
+        await base.OnInitAsync();
+
+        if (_gameEngine == null)
+        {
+            _gameEngine = new GameEngine();
+            _gameEngine.ExecuteDraw = async (boardData) =>
+            {
+                await JSRuntime.InvokeAsync<object>("draw", boardData);
+            };
+        }
     }
 
     protected override async Task OnAfterRenderAsync()
@@ -24,7 +36,13 @@
         {
             _loaded = true;
             await JSRuntime.InvokeAsync<object>("initializeView", _canvas);
-            await JSRuntime.InvokeAsync<object>("draw");
+            await JSRuntime.InvokeAsync<object>("draw", _gameEngine.BoardData);
         }
+    }
+
+    [JSInvokable]
+    public static async void CanvasClickReceived(int column, int row)
+    {
+        await _gameEngine.CanvasClickAsync(column, row);
     }
 }

@@ -17,7 +17,7 @@ namespace XO
         private string _subState = BoardSubState.Unknown;
         private EvaluationResult _evaluationResult = null;
 
-        private Piece[,] _pieces;
+        private Piece[][] _pieces;
 
         public Board(Player player = Player.X, int width = 10, int heigth = 10)
         {
@@ -93,6 +93,7 @@ namespace XO
                 FirstPlayer = FirstPlayer.ToString().ToLower()[0],
                 CurrentPlayer = CurrentPlayer.ToString().ToLower()[0],
                 Board = ToString(),
+                Data = _pieces,
                 Moves = _moves.Select(m => m.Column + (m.Row * Width)).ToList(),
                 Version = 1
             };
@@ -139,11 +140,11 @@ namespace XO
             }
 
             CleanUp(CurrentPlayer, rows[0].Length, rows.Length);
-            for (var i = 0; i < rows[0].Length; i++)
+            for (var column = 0; column < rows[0].Length; column++)
             {
-                for (var j = 0; j < rows.Length; j++)
+                for (var row = 0; row < rows.Length; row++)
                 {
-                    var piece = rows[j][i];
+                    var piece = rows[row][column];
                     var boardPiece = Piece.Empty;
                     switch (piece)
                     {
@@ -159,7 +160,7 @@ namespace XO
                             throw new ArgumentOutOfRangeException("board");
                     }
 
-                    _pieces[i, j] = boardPiece;
+                    _pieces[column][row] = boardPiece;
                 }
             }
         }
@@ -176,7 +177,7 @@ namespace XO
 
                 for (var column = 0; column < Width; column++)
                 {
-                    var piece = _pieces[column, row];
+                    var piece = _pieces[column][row];
                     var pieceChar = '-';
 
                     switch (piece)
@@ -210,7 +211,7 @@ namespace XO
 
         public Piece GetPiece(int column, int row)
         {
-            return _pieces[column, row];
+            return _pieces[column][row];
         }
 
         public EvaluationResult MakeMove(int moveIndex)
@@ -303,7 +304,7 @@ namespace XO
 
         public EvaluationResult MakeMove(int column, int row)
         {
-            if (_pieces[column, row] != Piece.Empty)
+            if (!IsAvailable(column, row))
             {
                 throw new ArgumentException();
             }
@@ -315,12 +316,12 @@ namespace XO
 
             if (CurrentPlayer == Player.X)
             {
-                _pieces[column, row] = Piece.X;
+                _pieces[column][row] = Piece.X;
                 CurrentPlayer = Player.O;
             }
             else if (CurrentPlayer == Player.O)
             {
-                _pieces[column, row] = Piece.O;
+                _pieces[column][row] = Piece.O;
                 CurrentPlayer = Player.X;
             }
             else
@@ -344,6 +345,11 @@ namespace XO
             }
 
             return evaluationResult;
+        }
+
+        public bool IsAvailable(int column, int row)
+        {
+            return _pieces[column][row] == Piece.Empty;
         }
 
         public EvaluationResult[,] Evaluation()
@@ -380,7 +386,7 @@ namespace XO
             if (_moves.Count > 0)
             {
                 var move = _moves.Pop();
-                _pieces[move.Column, move.Row] = Piece.Empty;
+                _pieces[move.Column][move.Row] = Piece.Empty;
                 if (CurrentPlayer == Player.X)
                 {
                     CurrentPlayer = Player.O;
@@ -529,7 +535,7 @@ namespace XO
             Height = heigth;
             CurrentPlayer = player;
             FirstPlayer = player;
-            _pieces = new Piece[Width, Height];
+            _pieces = new Piece[Width][];
             _moves.Clear();
 
             _state = BoardState.Running;
@@ -537,9 +543,10 @@ namespace XO
 
             for (var column = 0; column < Width; column++)
             {
+                _pieces[column] = new Piece[Height];
                 for (var row = 0; row < Height; row++)
                 {
-                    _pieces[column, row] = Piece.Empty;
+                    _pieces[column][row] = Piece.Empty;
                 }
             }
         }

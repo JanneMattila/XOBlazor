@@ -1,9 +1,18 @@
 ﻿console.log("PlayView.js loaded");
 
+class DotNet {
+    static invokeMethod: Function;
+}
+
+class BoardData {
+    moves: Array<number>;
+    data: Int8Array[];
+}
+
 let _canvas: HTMLCanvasElement;
 let _context: CanvasRenderingContext2D;
 
-let _size = 20;
+let _size = 10;
 let _dragging = 0;
 let _mouseDown = false;
 let _lastX = 0;
@@ -13,59 +22,21 @@ let _currentMouseY = 0;
 let _marginLeft = 0;
 let _marginTop = 0;
 
+const PIECE_SIZE = 45;
+
+let _boardData: BoardData;
 let _images: HTMLImageElement[] = [];
-let _board: Int8Array[] = [];
 let _currentPlayer = "x";
 
-window.addEventListener('resize', function () {
-    console.log("PlayView.js resize");
+function calculatePosition(event: MouseEvent): void {
 
-    _canvas.style.marginLeft = "0px";
-    _canvas.style.marginTop = "0px";
+    let column = Math.floor(event.offsetX / PIECE_SIZE);
+    let row = Math.floor(event.offsetY / PIECE_SIZE);
 
-    _dragging = 0;
-    _marginLeft = 0;
-    _marginTop = 0;
-    _currentMouseX = -1;
-    _currentMouseY = -1;
-}, false);
+    console.log("Clicked canvas at " + column + " - " + row);
 
-window.addEventListener('mousemove', function (e) {
-
-    const calcDeltaX = e.clientX - _lastX;
-    const calcDeltaY = e.clientY - _lastY;
-    const moveRadius = Math.sqrt(calcDeltaX * calcDeltaX + calcDeltaY * calcDeltaY);
-
-    if (_dragging == 1 && moveRadius > 25) {
-        _dragging = 2;
-        console.log("Mouse move");
-    }
-
-    if (_dragging == 2) {
-        const deltaX = e.clientX - _lastX;
-        const deltaY = e.clientY - _lastY;
-        _lastX = e.clientX;
-        _lastY = e.clientY;
-        _marginLeft += deltaX;
-        _marginTop += deltaY;
-        _canvas.style.marginLeft = _marginLeft + "px";
-        _canvas.style.marginTop = _marginTop + "px";
-    }
-    e.preventDefault();
-
-    _currentMouseX = e.clientX;
-    _currentMouseY = e.clientY;
-
-    draw();
-}, false);
-
-window.addEventListener('mouseup', function (e) {
-
-    console.log("Mouse up");
-
-    _dragging = 0;
-    _mouseDown = false;
-}, false);
+    DotNet.invokeMethod("XO.Web", "CanvasClickReceived", column, row);
+}
 
 function loadImages() {
     let imagesLoaded = 0;
@@ -77,7 +48,7 @@ function loadImages() {
             imagesLoaded++;
 
             if (imagesLoaded === imageFiles.length) {
-                draw();
+                draw(_boardData);
             }
         };
         _images[i].src = path + imageFiles[i];
@@ -98,28 +69,80 @@ function initializeView(canvas: HTMLCanvasElement) {
         _mouseDown = true;
         _lastX = e.clientX;
         _lastY = e.clientY;
-        e.preventDefault();
+        //e.preventDefault();
     }, false);
 
     _canvas.addEventListener("click", (event: MouseEvent) => {
-        //calculatePosition(event);
+        calculatePosition(event);
     });
+
+    window.addEventListener('resize', function () {
+        console.log("PlayView.js resize");
+
+        _canvas.style.marginLeft = "0px";
+        _canvas.style.marginTop = "0px";
+
+        _dragging = 0;
+        _marginLeft = 0;
+        _marginTop = 0;
+        _currentMouseX = -1;
+        _currentMouseY = -1;
+    }, false);
+
+    window.addEventListener('mousemove', function (e) {
+
+        const calcDeltaX = e.clientX - _lastX;
+        const calcDeltaY = e.clientY - _lastY;
+        const moveRadius = Math.sqrt(calcDeltaX * calcDeltaX + calcDeltaY * calcDeltaY);
+
+        if (_dragging == 1 && moveRadius > 25) {
+            _dragging = 2;
+            console.log("Mouse move");
+        }
+
+        if (_dragging == 2) {
+            const deltaX = e.clientX - _lastX;
+            const deltaY = e.clientY - _lastY;
+            _lastX = e.clientX;
+            _lastY = e.clientY;
+            _marginLeft += deltaX;
+            _marginTop += deltaY;
+            _canvas.style.marginLeft = _marginLeft + "px";
+            _canvas.style.marginTop = _marginTop + "px";
+        }
+        e.preventDefault();
+
+        _currentMouseX = e.clientX;
+        _currentMouseY = e.clientY;
+
+        //draw(_boardData);
+    }, false);
+
+    window.addEventListener('mouseup', function (e) {
+
+        console.log("Mouse up");
+
+        _dragging = 0;
+        _mouseDown = false;
+    }, false);
 }
 
-function draw() {
+function draw(boardData: BoardData) {
     console.log("PlayView.js draw");
+    console.log(_boardData);
     if (_context == null) {
         return;
     }
 
+    _boardData = boardData;
     _context.clearRect(0, 0, _canvas.width, _canvas.height);
 
-    const pieceWidth = 45;
-    const pieceHeight = 45;
+    const pieceWidth = PIECE_SIZE;
+    const pieceHeight = PIECE_SIZE;
     const boardWidth = _size * pieceWidth;
     const boardHeight = _size * pieceHeight;
 
-    for (let i = 0; i <= 10; i++) {
+    for (let i = 0; i <= _size; i++) {
         const lineX = i * pieceWidth;
         const lineY = i * pieceHeight;
 
@@ -139,8 +162,31 @@ function draw() {
             const x = column * pieceWidth;
             const y = row * pieceHeight;
             const index = _size * row + column;
+            const piece = String.fromCharCode(_boardData.data[column][row]);
 
-            if (_dragging == 0 &&
+            /*
+            if (previousMoveColumn == column && previousMoveRow == row) {
+                const fillStyle = _context.fillStyle;
+                _context.fillStyle = "#b8ffaa";
+                _context.fillRect(x + 1, y + 1, pieceWidth - 2, pieceHeight - 2);
+                _context.fillStyle = fillStyle;
+            }
+            else if (winningMoves != null &&
+                winningMoves.indexOf(index) != -1) {
+                const fillStyle = _context.fillStyle;
+                _context.fillStyle = "#AAAAFF";
+                _context.fillRect(x + 1, y + 1, pieceWidth - 2, pieceHeight - 2);
+                _context.fillStyle = fillStyle;
+            }
+            */
+
+            if (piece === 'x') {
+                _context.drawImage(_images[0], 9 + x, 8 + y);
+            }
+            else if (piece === 'o') {
+                _context.drawImage(_images[2], 7 + x, 7 + y);
+            }
+            else if (_dragging == 0 &&
                 x >= _currentMouseX - _canvas.offsetLeft - pieceWidth && x < _currentMouseX - _canvas.offsetLeft &&
                 y >= _currentMouseY - _canvas.offsetTop - pieceHeight && y < _currentMouseY - _canvas.offsetTop) {
 
@@ -151,6 +197,17 @@ function draw() {
                     _context.drawImage(_images[3], 9 + x, 8 + y);
                 }
             }
+            /*
+            else if (_pendingColumn == column && _pendingRow == row) {
+
+                if (_currentPlayer === "x") {
+                    _context.drawImage(_images[1], 7 + x, 7 + y);
+                }
+                else {
+                    _context.drawImage(_images[3], 9 + x, 8 + y);
+                }
+            }
+            */
         }
     }
 }
