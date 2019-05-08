@@ -27,3 +27,26 @@ foreach($file in $files)
   (Get-Content $file) | % { $_ -Replace '<base href="/" />', '<base href="/XOBlazorApp/" />' } | Set-Content $file
 }  
 ``` 
+
+### Change 'start_url' in manifest.json
+
+```json
+  "start_url": "/",
+``` 
+
+That needs to be replaced to match the correct path
+in GitHub Pages e.g.
+
+```json
+  "start_url": "/XOBlazorApp/",
+``` 
+
+This can be achieved with following PowerShell:
+
+```powershell
+$files = Get-ChildItem . -Include "manifest.json" -Recurse
+foreach($file in $files)
+{
+  (Get-Content $file) | % { $_ -Replace '"start_url": "/"', '"start_url": "/XOBlazorApp/"' } | Set-Content $file
+}  
+``` 
