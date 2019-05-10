@@ -7,6 +7,7 @@
    width="45">
   <g
      id="layer1">
+    <rect width="45" height="45" fill="#b8ffaa"/>
     <text
        id="text5640"
        y="0"
@@ -14,7 +15,7 @@
        style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        xml:space="preserve"><tspan
          y="37"
-         x="6"
+         x="7"
          id="tspan5642">O</tspan></text>
   </g>
 </svg>

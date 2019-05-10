@@ -93,10 +93,42 @@ namespace XO
                 FirstPlayer = FirstPlayer.ToString().ToLower()[0],
                 CurrentPlayer = CurrentPlayer.ToString().ToLower()[0],
                 Board = ToString(),
-                Data = _pieces,
+                Data = ConvertPiecesToDataArray(_pieces),
                 Moves = _moves.Select(m => m.Column + (m.Row * Width)).ToList(),
                 Version = 1
             };
+        }
+
+        private int[][] ConvertPiecesToDataArray(Piece[][] pieces)
+        {
+            var data = new int[pieces[0].Length][];
+            for (var column = 0; column < pieces[0].Length; column++)
+            {
+                data[column] = new int[pieces[0].Length];
+                for (var row = 0; row < pieces.Length; row++)
+                {
+                    var piece = pieces[column][row];
+                    if (piece == Piece.X)
+                    {
+                        data[column][row] = MoveHightlight.NormalMove;
+                    }
+                    else if (piece == Piece.O)
+                    {
+                        data[column][row] = -MoveHightlight.NormalMove;
+                    }
+                }
+            }
+
+            if (this.WinningMoves != null)
+            {
+                foreach (var moveIndex in this.WinningMoves)
+                {
+                    var move = Move.FromIndex(this, moveIndex);
+                    data[move.Column][move.Row] *= MoveHightlight.SelectedMove;
+                }
+            }
+
+            return data;
         }
 
         public void Deserialize(BoardData data)
@@ -349,7 +381,11 @@ namespace XO
 
         public bool IsAvailable(int column, int row)
         {
-            return _pieces[column][row] == Piece.Empty;
+            if (this.State == BoardState.Running)
+            {
+                return _pieces[column][row] == Piece.Empty;
+            }
+            return false;
         }
 
         public EvaluationResult[,] Evaluation()

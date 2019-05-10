@@ -11,14 +11,7 @@ namespace XO
         public Action<BoardData> ExecuteDraw;
 
         private Board _board;
-
-        public BoardData BoardData
-        {
-            get
-            {
-                return _board.Serialize();
-            }
-        }
+        private Move _selectedMove;
 
         public GameEngine()
         {
@@ -31,9 +24,39 @@ namespace XO
 
             if (_board.IsAvailable(column, row))
             {
-                _board.MakeMove(column, row);
+                BoardData boardData;
+                if (_selectedMove == null || _selectedMove.Column != column || _selectedMove.Row != row)
+                {
+                    // Pre-select this position 
+                    Console.WriteLine($"CanvasClickAsync: Preselect move {column} {row}");
+                    _selectedMove = new Move(_board)
+                    {
+                        Column = column,
+                        Row = row
+                    };
 
-                ExecuteDraw(BoardData);
+                    boardData = _board.Serialize();
+                    boardData.Data[column][row] = _board.CurrentPlayer == Player.X ? MoveHightlight.PreSelectedMove : -MoveHightlight.PreSelectedMove;
+                }
+                else
+                {
+                    Console.WriteLine($"CanvasClickAsync: Make move {column} {row}");
+
+                    _selectedMove = null;
+                    _board.MakeMove(column, row);
+                    boardData = _board.Serialize();
+                    if (_board.State == BoardState.Running)
+                    {
+                        boardData.Data[column][row] *= MoveHightlight.SelectedMove;
+                    }
+                }
+
+                ExecuteDraw(boardData);
+            }
+            else if (_selectedMove != null)
+            {
+                _selectedMove = null;
+                ExecuteDraw(_board.Serialize());
             }
 
             await Task.CompletedTask;

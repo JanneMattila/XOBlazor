@@ -26,6 +26,7 @@ const PIECE_SIZE = 45;
 
 let _boardData: BoardData;
 let _images: HTMLImageElement[] = [];
+let _imagesLoaded = false;
 let _currentPlayer = "x";
 
 function calculatePosition(event: MouseEvent): void {
@@ -41,13 +42,17 @@ function calculatePosition(event: MouseEvent): void {
 function loadImages() {
     let imagesLoaded = 0;
     const path = "images/";
-    const imageFiles = ["x.svg", "x_shadow.svg", "o.svg", "o_shadow.svg"];
+    const imageFiles = [
+        "o_shadowlight.svg", "o_selected.svg", "o_shadowdark.svg", "o.svg", "empty.svg",
+        "x.svg", "x_shadowdark.svg", "x_selected.svg", "x_shadowlight.svg"];
     for (let i = 0; i < imageFiles.length; i++) {
         _images[i] = new Image();
         _images[i].onload = function () {
             imagesLoaded++;
 
+            console.log(`imagesLoaded: ${imagesLoaded}, imageFiles.length: ${imageFiles.length}`);
             if (imagesLoaded === imageFiles.length) {
+                _imagesLoaded = true;
                 draw(_boardData);
             }
         };
@@ -128,23 +133,23 @@ function initializeView(canvas: HTMLCanvasElement) {
 }
 
 function draw(boardData: BoardData) {
-    console.log("PlayView.js draw");
-    console.log(_boardData);
-    if (_context == null) {
+
+    if (_context == null || !_imagesLoaded) {
         return;
     }
+
+    console.log("PlayView.js draw");
+    console.log(_boardData);
 
     _boardData = boardData;
     _context.clearRect(0, 0, _canvas.width, _canvas.height);
 
-    const pieceWidth = PIECE_SIZE;
-    const pieceHeight = PIECE_SIZE;
-    const boardWidth = _size * pieceWidth;
-    const boardHeight = _size * pieceHeight;
+    const boardWidth = _size * PIECE_SIZE;
+    const boardHeight = _size * PIECE_SIZE;
 
     for (let i = 0; i <= _size; i++) {
-        const lineX = i * pieceWidth;
-        const lineY = i * pieceHeight;
+        const lineX = i * PIECE_SIZE;
+        const lineY = i * PIECE_SIZE;
 
         _context.beginPath();
         _context.moveTo(lineX, 0);
@@ -157,57 +162,14 @@ function draw(boardData: BoardData) {
         _context.stroke();
     }
 
-    for (let column = 0; column < _size; column++) {
-        for (let row = 0; row < _size; row++) {
-            const x = column * pieceWidth;
-            const y = row * pieceHeight;
-            const index = _size * row + column;
-            const piece = String.fromCharCode(_boardData.data[column][row]);
-
-            /*
-            if (previousMoveColumn == column && previousMoveRow == row) {
-                const fillStyle = _context.fillStyle;
-                _context.fillStyle = "#b8ffaa";
-                _context.fillRect(x + 1, y + 1, pieceWidth - 2, pieceHeight - 2);
-                _context.fillStyle = fillStyle;
-            }
-            else if (winningMoves != null &&
-                winningMoves.indexOf(index) != -1) {
-                const fillStyle = _context.fillStyle;
-                _context.fillStyle = "#AAAAFF";
-                _context.fillRect(x + 1, y + 1, pieceWidth - 2, pieceHeight - 2);
-                _context.fillStyle = fillStyle;
-            }
-            */
-
-            if (piece === 'x') {
-                _context.drawImage(_images[0], 9 + x, 8 + y);
-            }
-            else if (piece === 'o') {
-                _context.drawImage(_images[2], 7 + x, 7 + y);
-            }
-            else if (_dragging == 0 &&
-                x >= _currentMouseX - _canvas.offsetLeft - pieceWidth && x < _currentMouseX - _canvas.offsetLeft &&
-                y >= _currentMouseY - _canvas.offsetTop - pieceHeight && y < _currentMouseY - _canvas.offsetTop) {
-
-                if (_currentPlayer === "x") {
-                    _context.drawImage(_images[1], 7 + x, 7 + y);
-                }
-                else {
-                    _context.drawImage(_images[3], 9 + x, 8 + y);
+    if (_boardData != null) {
+        for (let column = 0; column < _size; column++) {
+            for (let row = 0; row < _size; row++) {
+                const piece = _boardData.data[column][row];
+                if (piece != 0) {
+                    _context.drawImage(_images[piece + 4], column * PIECE_SIZE, row * PIECE_SIZE);
                 }
             }
-            /*
-            else if (_pendingColumn == column && _pendingRow == row) {
-
-                if (_currentPlayer === "x") {
-                    _context.drawImage(_images[1], 7 + x, 7 + y);
-                }
-                else {
-                    _context.drawImage(_images[3], 9 + x, 8 + y);
-                }
-            }
-            */
         }
     }
 }

@@ -42,7 +42,7 @@ namespace XO
         /// <summary>
         /// Gets or sets board as array.
         /// </summary>
-        public Piece[][] Data { get; set; }
+        public int[][] Data { get; set; }
 
         public List<int> Moves { get; set; }
 
