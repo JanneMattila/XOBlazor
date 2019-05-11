@@ -40,6 +40,8 @@ namespace XO
             {
                 case "Randomizer":
                     return new Randomizer();
+                case "LastMoveRandomizer":
+                    return new LastMoveRandomizer();
                 default:
                     return new HumanPlayer();
             }
