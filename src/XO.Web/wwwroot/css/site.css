@@ -2,6 +2,8 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    touch-action: manipulation;
+    overscroll-behavior-y: contain;
 }
 
 app {
@@ -20,10 +22,10 @@ app {
     flex: 1;
 }
 
-    .main .top-row {
-        background-color: #e6e6e6;
-        border-bottom: 1px solid #d6d5d5;
-    }
+.main .top-row {
+    background-color: #e6e6e6;
+    border-bottom: 1px solid #d6d5d5;
+}
 
 .sidebar {
     background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
