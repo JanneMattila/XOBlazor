@@ -134,7 +134,7 @@ function draw(boardData) {
             for (var row = 0; row < _size; row++) {
                 var piece = _boardData.data[column][row];
                 if (piece != 0) {
-                    _context.drawImage(_images[piece + 4], column * PIECE_SIZE, row * PIECE_SIZE);
+                    _context.drawImage(_images[piece + 4], column * PIECE_SIZE + 1, row * PIECE_SIZE + 1);
                 }
             }
         }
