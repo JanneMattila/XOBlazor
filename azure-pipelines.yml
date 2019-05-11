@@ -16,9 +16,9 @@ variables:
 name: 1.0.$(Rev:r)
 steps:
 - task: DotNetCoreInstaller@0
-  displayName: 'Use .NET Core sdk 3.0.100-preview4-011223'
+  displayName: 'Install .NET Core SDK'
   inputs:
-    version: '3.0.100-preview4-011223'
+    version: '3.0.100-preview5-011568'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build'
