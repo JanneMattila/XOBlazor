@@ -370,6 +370,12 @@ namespace XO
                 _state = BoardState.Finished;
                 _subState = CurrentPlayer != Player.X ? BoardSubState.XWon : BoardSubState.OWon;
             }
+            else if (_moves.Count == Width * Height)
+            {
+                // Board is full!
+                _state = BoardState.Finished;
+                _subState = BoardSubState.Draw;
+            }
             else
             {
                 _state = BoardState.Running;

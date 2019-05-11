@@ -17,8 +17,6 @@ let _dragging = 0;
 let _mouseDown = false;
 let _lastX = 0;
 let _lastY = 0;
-let _currentMouseX = 0;
-let _currentMouseY = 0;
 let _marginLeft = 0;
 let _marginTop = 0;
 
@@ -27,10 +25,8 @@ const PIECE_SIZE = 45;
 let _boardData: BoardData;
 let _images: HTMLImageElement[] = [];
 let _imagesLoaded = false;
-let _currentPlayer = "x";
 
 function calculatePosition(event: MouseEvent): void {
-
     let column = Math.floor(event.offsetX / PIECE_SIZE);
     let row = Math.floor(event.offsetY / PIECE_SIZE);
 
@@ -74,7 +70,6 @@ function initializeView(canvas: HTMLCanvasElement) {
         _mouseDown = true;
         _lastX = e.clientX;
         _lastY = e.clientY;
-        //e.preventDefault();
     }, false);
 
     _canvas.addEventListener("click", (event: MouseEvent) => {
@@ -90,8 +85,6 @@ function initializeView(canvas: HTMLCanvasElement) {
         _dragging = 0;
         _marginLeft = 0;
         _marginTop = 0;
-        _currentMouseX = -1;
-        _currentMouseY = -1;
     }, false);
 
     window.addEventListener('mousemove', function (e) {
@@ -116,15 +109,9 @@ function initializeView(canvas: HTMLCanvasElement) {
             _canvas.style.marginTop = _marginTop + "px";
         }
         e.preventDefault();
-
-        _currentMouseX = e.clientX;
-        _currentMouseY = e.clientY;
-
-        //draw(_boardData);
     }, false);
 
     window.addEventListener('mouseup', function (e) {
-
         console.log("Mouse up");
 
         _dragging = 0;
@@ -133,7 +120,6 @@ function initializeView(canvas: HTMLCanvasElement) {
 }
 
 function draw(boardData: BoardData) {
-
     if (_context == null || !_imagesLoaded) {
         return;
     }

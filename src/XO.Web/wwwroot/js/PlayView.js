@@ -16,15 +16,12 @@ var _dragging = 0;
 var _mouseDown = false;
 var _lastX = 0;
 var _lastY = 0;
-var _currentMouseX = 0;
-var _currentMouseY = 0;
 var _marginLeft = 0;
 var _marginTop = 0;
 var PIECE_SIZE = 45;
 var _boardData;
 var _images = [];
 var _imagesLoaded = false;
-var _currentPlayer = "x";
 function calculatePosition(event) {
     var column = Math.floor(event.offsetX / PIECE_SIZE);
     var row = Math.floor(event.offsetY / PIECE_SIZE);
@@ -63,7 +60,6 @@ function initializeView(canvas) {
         _mouseDown = true;
         _lastX = e.clientX;
         _lastY = e.clientY;
-        //e.preventDefault();
     }, false);
     _canvas.addEventListener("click", function (event) {
         calculatePosition(event);
@@ -75,8 +71,6 @@ function initializeView(canvas) {
         _dragging = 0;
         _marginLeft = 0;
         _marginTop = 0;
-        _currentMouseX = -1;
-        _currentMouseY = -1;
     }, false);
     window.addEventListener('mousemove', function (e) {
         var calcDeltaX = e.clientX - _lastX;
@@ -97,9 +91,6 @@ function initializeView(canvas) {
             _canvas.style.marginTop = _marginTop + "px";
         }
         e.preventDefault();
-        _currentMouseX = e.clientX;
-        _currentMouseY = e.clientY;
-        //draw(_boardData);
     }, false);
     window.addEventListener('mouseup', function (e) {
         console.log("Mouse up");
