@@ -4,9 +4,9 @@ namespace XO.ComputerPlayers
 {
     public class Randomizer : IPlayer
     {
-        private readonly Random _random = new Random();
-
         public bool IsHuman => false;
+
+        private readonly Random _random = new Random();
 
         public Move MakeMove(Board board)
         {
