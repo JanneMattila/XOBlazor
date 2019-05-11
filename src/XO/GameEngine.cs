@@ -10,11 +10,11 @@ namespace XO
     {
         public Action<BoardData> ExecuteDraw;
 
-        private Board _board;
-        private Move _selectedMove;
+        internal Move _selectedMove;
+        internal Board _board;
+        internal IPlayer _playerX;
+        internal IPlayer _playerO;
 
-        private IPlayer _playerX;
-        private IPlayer _playerO;
         private System.Timers.Timer _timer;
 
         public GameEngine()
@@ -27,10 +27,15 @@ namespace XO
 
         public void SetPlayers(string playerX, string playerO)
         {
+            SetPlayers(LoadPlayer(playerX), LoadPlayer(playerO));
+        }
+
+        public void SetPlayers(IPlayer playerX, IPlayer playerO)
+        {
             Console.WriteLine($"GameEngine: X: {playerX}, O: {playerO}");
 
-            _playerX = LoadPlayer(playerX);
-            _playerO = LoadPlayer(playerO);
+            _playerX = playerX;
+            _playerO = playerO;
             SetTimerForComputerPlayer();
         }
 
