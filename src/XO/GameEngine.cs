@@ -22,7 +22,14 @@ namespace XO
         {
             Console.WriteLine($"CanvasClickAsync: {column} {row}");
 
-            if (_board.IsAvailable(column, row))
+            if (_board.State == BoardState.Finished)
+            {
+                // Initiate new game
+                var firstPlayer = _board.FirstPlayer == Player.X ? Player.O : Player.X;
+                _board = new Board(firstPlayer);
+                ExecuteDraw(_board.Serialize());
+            }
+            else if (_board.IsAvailable(column, row))
             {
                 BoardData boardData;
                 if (_selectedMove == null || _selectedMove.Column != column || _selectedMove.Row != row)
@@ -40,6 +47,7 @@ namespace XO
                 }
                 else
                 {
+                    // Make move for this position
                     Console.WriteLine($"CanvasClickAsync: Make move {column} {row}");
 
                     _selectedMove = null;
@@ -55,6 +63,7 @@ namespace XO
             }
             else if (_selectedMove != null)
             {
+                // Clear selection
                 _selectedMove = null;
                 ExecuteDraw(_board.Serialize());
             }
