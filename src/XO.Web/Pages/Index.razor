@@ -3,29 +3,28 @@
 
 <h1>Play XO</h1>
 
-<button class="btn btn-primary" onclick="@PlayerVsPlayer">Player vs Player</button>
+<EditForm Model="@this">
+    <InputSelect id="playerX" bind-Value="@PlayerX">
+        <option value="Player">Human</option>
+        <option value="Randomizer">Randomizer</option>
+    </InputSelect>
+    vs.
+    <InputSelect id="playerO" bind-Value="@PlayerO">
+        <option value="Player">Human</option>
+        <option value="Randomizer">Randomizer</option>
+    </InputSelect>
 
-<button class="btn btn-primary" onclick="@PlayVsRandomizer">Player vs 'Randomizer'</button>
-
-<button class="btn btn-primary" onclick="@RandomizerVsRandomizer">'Randomizer' vs 'Randomizer'</button>
+    <button class="btn btn-primary" onclick="@Play">Go!</button>
+</EditForm>
 
 @functions {
-    private void PlayerVsPlayer()
+
+    string PlayerX = "Human";
+    string PlayerO = "Human";
+
+    private void Play()
     {
         var random = new Random();
-        UriHelper.NavigateTo($"Play/{random.Next(1, 1000)}/Player/Player");
-    }
-
-    private void PlayVsRandomizer()
-    {
-        var random = new Random();
-        UriHelper.NavigateTo($"Play/{random.Next(1, 1000)}/Player/Randomizer");
-    }
-
-
-    private void RandomizerVsRandomizer()
-    {
-        var random = new Random();
-        UriHelper.NavigateTo($"Play/{random.Next(1, 1000)}/Randomizer/Randomizer");
+        UriHelper.NavigateTo($"Play/{random.Next(1, 1000)}/{PlayerX}/{PlayerO}");
     }
 }
