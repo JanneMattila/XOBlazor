@@ -1,4 +1,4 @@
-﻿@page "/Play"
+﻿@page "/Play/{GameID}/{PlayerX}/{PlayerO}"
 @inject IJSRuntime JSRuntime
 
 <canvas id="canvas" ref="_canvas" width="450" height="450" onclick="@CanvasClick"></canvas>
@@ -7,6 +7,12 @@
 {
     [Parameter]
     string GameID { get; set; }
+
+    [Parameter]
+    string PlayerX { get; set; }
+
+    [Parameter]
+    string PlayerO { get; set; }
 
     bool _loaded = false;
 
@@ -22,15 +28,15 @@
     protected override async Task OnInitAsync()
     {
         await base.OnInitAsync();
+        Console.WriteLine("OnInitAsync");
 
-        if (_gameEngine == null)
+        _gameEngine = new GameEngine();
+        _gameEngine.SetPlayers(PlayerX, PlayerO);
+        _gameEngine.ExecuteDraw = async (boardData) =>
         {
-            _gameEngine = new GameEngine();
-            _gameEngine.ExecuteDraw = async (boardData) =>
-            {
-                await JSRuntime.InvokeAsync<object>("draw", boardData);
-            };
-        }
+            await JSRuntime.InvokeAsync<object>("draw", boardData);
+            StateHasChanged();
+        };
     }
 
     protected override async Task OnAfterRenderAsync()

@@ -3,12 +3,29 @@
 
 <h1>Play XO</h1>
 
-<button class="btn btn-primary" onclick="@NavigateToGame">Two player game</button>
+<button class="btn btn-primary" onclick="@PlayerVsPlayer">Player vs Player</button>
+
+<button class="btn btn-primary" onclick="@PlayVsRandomizer">Player vs 'Randomizer'</button>
+
+<button class="btn btn-primary" onclick="@RandomizerVsRandomizer">'Randomizer' vs 'Randomizer'</button>
 
 @functions {
-    private void NavigateToGame()
+    private void PlayerVsPlayer()
     {
         var random = new Random();
-        UriHelper.NavigateTo($"Play?id={random.Next(1,1000)}");
+        UriHelper.NavigateTo($"Play/{random.Next(1, 1000)}/Player/Player");
+    }
+
+    private void PlayVsRandomizer()
+    {
+        var random = new Random();
+        UriHelper.NavigateTo($"Play/{random.Next(1, 1000)}/Player/Randomizer");
+    }
+
+
+    private void RandomizerVsRandomizer()
+    {
+        var random = new Random();
+        UriHelper.NavigateTo($"Play/{random.Next(1, 1000)}/Randomizer/Randomizer");
     }
 }
