@@ -94,7 +94,7 @@ namespace XO
                 CurrentPlayer = CurrentPlayer.ToString().ToLower()[0],
                 Board = ToString(),
                 Data = ConvertPiecesToDataArray(_pieces),
-                Moves = _moves.Select(m => m.Column + (m.Row * Width)).ToList(),
+                Moves = _moves.Select(m => m.Column + (m.Row * Width)).Reverse().ToList(),
                 Version = 1
             };
         }
@@ -298,16 +298,66 @@ namespace XO
             return GetAvailableMovesInRadiusAsNumbers(move.Column, move.Row, radius);
         }
 
+        public IEnumerable<Move> GetNearbyAvailableMoves()
+        {
+            var moves = new List<Move>();
+            var indexes = new List<int>();
+            var moveOffsets = new List<int[]>()
+            {
+                new int[] { 1, 0 }, // East
+                new int[] { -1, 0 }, // West
+                new int[] { 0, 1 }, // South
+                new int[] { 0, -1 }, // North
+                new int[] { 1, -1 }, // North-East
+                new int[] { -1, 1 }, // South-West
+                new int[] { -1, -1 }, // North-West
+                new int[] { 1, 1 } // South-East
+            };
+            foreach (var move in GetMoves())
+            {
+                foreach (var moveOffset in moveOffsets)
+                {
+                    var column = move.Column + moveOffset[0];
+                    var row = move.Row + moveOffset[1];
+                    if (column < 0 || column >= Width || row < 0 || row >= Height)
+                    {
+                        continue;
+                    }
+
+                    if (GetPiece(column, row) == Piece.Empty)
+                    {
+                        var index = column + (row * Width);
+                        if (!indexes.Contains(index))
+                        {
+                            indexes.Add(index);
+                        }
+                    }
+                }
+            }
+
+            foreach (var index in indexes)
+            {
+                moves.Add(Move.FromIndex(this, index));
+            }
+
+            return moves;
+        }
+
         public IEnumerable<Move> GetAvailableMoves()
+        {
+            return GetAvailableMoves(0, 0, Width, Height);
+        }
+
+        public IEnumerable<Move> GetAvailableMoves(int startColumn, int startRow, int endColumn, int endRow)
         {
             if (_state != BoardState.Running)
             {
                 yield break;
             }
 
-            for (var column = 0; column < Width; column++)
+            for (var column = startColumn; column < endColumn; column++)
             {
-                for (var row = 0; row < Height; row++)
+                for (var row = startRow; row < endRow; row++)
                 {
                     if (GetPiece(column, row) == Piece.Empty)
                     {

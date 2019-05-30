@@ -34,7 +34,7 @@ namespace XO.Tests.ComputerPlayers
         {
             // Arrange
             _board.MakeMove(5, 5);
-            var expected = 44;
+            var expected = 65;
 
             // Act
             var actual = _solver.MakeMove(_board).ToInt();
@@ -229,6 +229,96 @@ namespace XO.Tests.ComputerPlayers
             // "-------o--"  "-------o--"
             // "----------"  "--------X-"
             var expected = 98;
+
+            // Act
+            var actual = _solver.MakeMove(_board).ToInt();
+
+            // Assert
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Prefer_One_Move_Victory_Over_Defensive_Move()
+        {
+            // Arrange
+            var moves = new int[] { 35, 83, 76, 65, 68, 87, 77, 37, 67, 42, 33, 63, 52, 53, 57, 56, 47, 48, 46, 43, 45, 54, 44 };
+            foreach (var move in moves)
+            {
+                _board.MakeMove(move);
+            }
+
+            // Board before: Board after: 
+            // "----------" "----------"
+            // "----------" "----------"
+            // "----------" "----------"
+            // "---x-x-o--" "---x-x-o--"
+            // "--ooxxxxo-" "--ooxxxxo-"
+            // "--xoo-ox--" "--xoo-ox--"
+            // "---o-o-xx-" "---o-o-xx-"
+            // "------xx--" "---O--xx--"
+            // "---o---o--" "---o---o--"
+            // "----------" "----------"
+            var expected = 73;
+
+            // Act
+            var actual = _solver.MakeMove(_board).ToInt();
+
+            // Assert
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Block_Opponents_Open_Straight_Of_Three()
+        {
+            // Arrange
+            var moves = new int[] { 35, 43, 53, 33, 44 };
+            foreach (var move in moves)
+            {
+                _board.MakeMove(move);
+            }
+
+            // Board before: Board after: 
+            // "----------" "----------"  
+            // "----------" "----------"
+            // "----------" "------O---"
+            // "---o-x----" "---o-x----"
+            // "---ox-----" "---ox-----"
+            // "---x------" "---x------"
+            // "----------" "--O-------"
+            // "----------" "----------"
+            // "----------" "----------"
+            // "----------" "----------"
+            var expected = 26; // Or 62
+
+            // Act
+            var actual = _solver.MakeMove(_board).ToInt();
+
+            // Assert
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Block_Opponents_Open_Straight_Of_Three2()
+        {
+            // Arrange
+            var moves = new int[] { 44, 54, 45, 43, 65, 55, 56, 34, 67, 46, 78, 89, 66 };
+            foreach (var move in moves)
+            {
+                _board.MakeMove(move);
+            }
+
+            // Board before: Board after: 
+            // "----------" "----------"
+            // "----------" "----------"
+            // "----------" "----------"
+            // "----o-----" "----o-----"
+            // "---oxxo---" "---oxxo---"
+            // "----oox---" "----oox---"
+            // "-----xxx--" "----Oxxx--"
+            // "--------x-" "--------x-"
+            // "---------o" "---------o"
+            // "----------" "----------"
+            var expected = 64;
 
             // Act
             var actual = _solver.MakeMove(_board).ToInt();

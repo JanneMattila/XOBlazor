@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace XO.ComputerPlayers
@@ -12,6 +14,7 @@ namespace XO.ComputerPlayers
 
         public Move MakeMove(Board board)
         {
+            var stopwatch = new Stopwatch();
             var lastMove = board.PreviousMove;
             if (lastMove == null)
             {
@@ -20,12 +23,16 @@ namespace XO.ComputerPlayers
             }
 
             _board = board;
+            var availableMoves = _board.GetNearbyAvailableMoves();
+
             // Do I win in 1 move?
+            stopwatch.Start();
             Console.WriteLine("Do I win in 1 move?");
             var winMove = Solve(
                     currentLevel: 1,
                     targetLevel: 1,
                     playerTurn: true,
+                    availableMoves: availableMoves,
                     evaluateCurrent: null,
                     evaluateTarget: (evaluationResult, move, playerTurn) =>
                     {
@@ -39,12 +46,19 @@ namespace XO.ComputerPlayers
                 return winMove;
             }
 
+            Console.WriteLine($"No. It took {stopwatch.ElapsedMilliseconds} ms to figure it out.");
+            var movesCount = _board.GetMoves().Count();
             // Do I lose if I do not make certain move?
             Console.WriteLine("Do I lose if I do not make certain move?");
-            var defensiveMove = Solve(
+            stopwatch.Restart();
+            Move defensiveMove = null;
+            if (movesCount > 7)
+            {
+                defensiveMove = Solve(
                     currentLevel: 1,
                     targetLevel: 2,
                     playerTurn: true,
+                    availableMoves: availableMoves,
                     evaluateCurrent: (evaluationResult, move, playerTurn) =>
                     {
                         return false;
@@ -54,35 +68,52 @@ namespace XO.ComputerPlayers
                         return evaluationResult.Evaluations.Any(result => Math.Abs(result.Value) >= Board.StraightLength);
                     }
                 );
+            }
             if (defensiveMove != null)
             {
                 // Must defensive move (otherwise direct lose after our turn)
+                Console.WriteLine($"Defensive move (otherwise direct lose after our turn). It took {stopwatch.ElapsedMilliseconds} ms to figure it out.");
                 return defensiveMove;
             }
 
+            Console.WriteLine($"No. It took {stopwatch.ElapsedMilliseconds} ms to figure it out.");
+
             // Do I lose if I miss two moves?
             Console.WriteLine("Do I lose if I miss two moves?");
-            var defensiveMove2 = Solve(
-                    currentLevel: 1,
-                    targetLevel: 3,
-                    playerTurn: true,
-                    evaluateCurrent: (evaluationResult, move, playerTurn) =>
-                    {
-                        return false;
-                    },
-                    evaluateTarget: (evaluationResult, move, playerTurn) =>
-                    {
-                        return evaluationResult.Evaluations.Any(result => Math.Abs(result.Value) >= Board.StraightLength);
-                    }
-                );
+            stopwatch.Restart();
+
+            Move defensiveMove2 = null;
+            if (movesCount > 4)
+            {
+                defensiveMove2 = Solve(
+                        currentLevel: 1,
+                        targetLevel: 3,
+                        playerTurn: true,
+                        availableMoves: availableMoves,
+                        evaluateCurrent: (evaluationResult, move, playerTurn) =>
+                        {
+                            return evaluationResult.Evaluations.Any(result => Math.Abs(result.Value) >= 4);
+                        },
+                        evaluateTarget: (evaluationResult, move, playerTurn) =>
+                        {
+                            return evaluationResult.Evaluations.Any(result => Math.Abs(result.Value) >= Board.StraightLength);
+                        }
+                    );
+            }
+
             if (defensiveMove2 != null)
             {
                 // Must defensive move (otherwise direct lose after our turn)
+                Console.WriteLine($"Defensive move (otherwise direct lose after our turn). It took {stopwatch.ElapsedMilliseconds} ms to figure it out.");
                 return defensiveMove2;
             }
 
+            Console.WriteLine($"No. It took {stopwatch.ElapsedMilliseconds} ms to figure it out.");
+
             // Simple scan for best move.
             Console.WriteLine("Scan!");
+            stopwatch.Restart();
+
             for (int targetLevel = 2; targetLevel < 4; targetLevel++)
             {
                 Console.WriteLine($"Scan: {targetLevel}");
@@ -92,6 +123,7 @@ namespace XO.ComputerPlayers
                         currentLevel: 1,
                         targetLevel: targetLevel,
                         playerTurn: true,
+                        availableMoves: availableMoves,
                         evaluateCurrent: (evaluationResult, move, playerTurn) =>
                         {
                             var evaluation = Evaluate(evaluationResult, playerTurn);
@@ -115,12 +147,15 @@ namespace XO.ComputerPlayers
                     );
                 if (bestReturn != null)
                 {
+                    Console.WriteLine($"Scan took {stopwatch.ElapsedMilliseconds} ms.");
                     return bestReturn;
                 }
             }
 
             // Panic - Let's take any valid move near previous move.
             Console.WriteLine("Searching any move as last last resort.");
+            stopwatch.Restart();
+
             var previousMove = _board.PreviousMove;
             Move panicMove = null;
             for (int radius = 1; radius < _board.Height; radius++)
@@ -131,6 +166,7 @@ namespace XO.ComputerPlayers
                 if (move != null)
                 {
                     // Found nearby empty position.
+                    Console.WriteLine($"Search took {stopwatch.ElapsedMilliseconds} ms.");
                     panicMove = move;
                     break;
                 }
@@ -143,42 +179,44 @@ namespace XO.ComputerPlayers
             int targetLevel,
             Func<EvaluationResult, Move, bool, bool> evaluateCurrent,
             Func<EvaluationResult, Move, bool, bool> evaluateTarget,
-            bool playerTurn)
+            bool playerTurn,
+            IEnumerable<Move> availableMoves)
         {
-            var previousMove = _board.PreviousMove;
-            var availableMoves = _board.GetAvailableMovesInRadius(previousMove.Column, previousMove.Row, targetLevel);
             foreach (var move in availableMoves)
             {
-                var evaluationResult = _board.MakeMove(move);
-
-                try
+                if (_board.GetPiece(move) == Piece.Empty)
                 {
-                    if (currentLevel < targetLevel)
-                    {
-                        // Current level
-                        if (evaluateCurrent(evaluationResult, move, playerTurn))
-                        {
-                            return move;
-                        }
+                    var evaluationResult = _board.MakeMove(move);
 
-                        var subMove = Solve(currentLevel + 1, targetLevel, evaluateCurrent, evaluateTarget, !playerTurn);
-                        if (subMove != null)
+                    try
+                    {
+                        if (currentLevel < targetLevel)
                         {
-                            return subMove;
+                            // Current level
+                            if (evaluateCurrent(evaluationResult, move, playerTurn))
+                            {
+                                return move;
+                            }
+
+                            var subMove = Solve(currentLevel + 1, targetLevel, evaluateCurrent, evaluateTarget, !playerTurn, availableMoves);
+                            if (subMove != null)
+                            {
+                                return subMove;
+                            }
+                        }
+                        else
+                        {
+                            // Target level
+                            if (evaluateTarget(evaluationResult, move, playerTurn))
+                            {
+                                return move;
+                            }
                         }
                     }
-                    else
+                    finally
                     {
-                        // Target level
-                        if (evaluateTarget(evaluationResult, move, playerTurn))
-                        {
-                            return move;
-                        }
+                        _board.Undo();
                     }
-                }
-                finally
-                {
-                    _board.Undo();
                 }
             }
 
