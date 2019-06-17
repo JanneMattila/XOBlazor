@@ -1,9 +1,9 @@
 ﻿@page "/Play/{GameID}/{PlayerX}/{PlayerO}"
 @inject IJSRuntime JSRuntime
 
-<canvas id="canvas" ref="_canvas" width="450" height="450" onclick="@CanvasClick"></canvas>
+<canvas id="canvas" @ref="_canvas" width="450" height="450" @onclick="@CanvasClick"></canvas>
 
-@functions 
+@code 
 {
     [Parameter]
     string GameID { get; set; }

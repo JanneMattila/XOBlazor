@@ -4,24 +4,24 @@
 <h1>Play XO</h1>
 
 <EditForm Model="@this">
-    <InputSelect id="playerX" bind-Value="@PlayerX">
+    <InputSelect id="playerX" @bind-Value="@PlayerX">
         <option value="Player">Human</option>
         <option value="Randomizer">Randomizer</option>
         <option value="LastMoveRandomizer">Last move nearby randomizer</option>
         <option value="Basic">Basic</option>
     </InputSelect>
     vs.
-    <InputSelect id="playerO" bind-Value="@PlayerO">
+    <InputSelect id="playerO" @bind-Value="@PlayerO">
         <option value="Player">Human</option>
         <option value="Randomizer">Randomizer</option>
         <option value="LastMoveRandomizer">Last move nearby randomizer</option>
         <option value="Basic">Basic</option>
     </InputSelect>
 
-    <button class="btn btn-primary" onclick="@Play">Go!</button>
+    <button class="btn btn-primary" @onclick="@Play">Go!</button>
 </EditForm>
 
-@functions {
+@code {
 
     string PlayerX = "Human";
     string PlayerO = "Human";

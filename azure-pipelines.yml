@@ -18,7 +18,7 @@ steps:
 - task: DotNetCoreInstaller@0
   displayName: 'Install .NET Core SDK'
   inputs:
-    version: '3.0.100-preview5-011568'
+    version: '3.0.100-preview6-012264'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build'
