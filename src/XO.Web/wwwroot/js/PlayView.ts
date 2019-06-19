@@ -7,6 +7,7 @@ class DotNet {
 class BoardData {
     moves: Array<number>;
     data: Int8Array[];
+    text: Array<string>;
 }
 
 let _canvas: HTMLCanvasElement;
@@ -155,6 +156,13 @@ function draw(boardData: BoardData) {
                 if (piece != 0) {
                     _context.drawImage(_images[piece + 4], column * PIECE_SIZE + 1, row * PIECE_SIZE + 1);
                 }
+            }
+        }
+
+        if (_boardData.text != null) {
+            for (let textLines = 0; textLines < _boardData.text.length; textLines++) {
+                const text = _boardData.text[textLines];
+                _context.fillText(text, PIECE_SIZE + 1, textLines * PIECE_SIZE + PIECE_SIZE);
             }
         }
     }

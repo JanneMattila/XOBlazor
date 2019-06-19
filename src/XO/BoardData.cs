@@ -44,6 +44,8 @@ namespace XO
         /// </summary>
         public int[][] Data { get; set; }
 
+        public List<string> Text { get; set; }
+
         public List<int> Moves { get; set; }
 
         public List<int> WinningStraight { get; set; }

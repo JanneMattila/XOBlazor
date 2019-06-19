@@ -94,6 +94,7 @@ namespace XO
                 CurrentPlayer = CurrentPlayer.ToString().ToLower()[0],
                 Board = ToString(),
                 Data = ConvertPiecesToDataArray(_pieces),
+                Text = new List<string>(),
                 Moves = _moves.Select(m => m.Column + (m.Row * Width)).Reverse().ToList(),
                 Version = 1
             };

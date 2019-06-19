@@ -129,6 +129,12 @@ function draw(boardData) {
                 }
             }
         }
+        if (_boardData.text != null) {
+            for (var textLines = 0; textLines < _boardData.text.length; textLines++) {
+                var text = _boardData.text[textLines];
+                _context.fillText(text, PIECE_SIZE + 1, textLines * PIECE_SIZE + PIECE_SIZE);
+            }
+        }
     }
 }
 //# sourceMappingURL=PlayView.js.map
