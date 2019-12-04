@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 
 namespace XO
 {
@@ -156,7 +156,7 @@ namespace XO
 
         public void Deserialize(string data)
         {
-            Deserialize(JsonConvert.DeserializeObject<BoardData>(data));
+            Deserialize(JsonSerializer.Deserialize<BoardData>(data));
         }
 
         public void SetBoard(string board)

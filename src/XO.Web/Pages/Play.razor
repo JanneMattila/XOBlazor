@@ -1,34 +1,34 @@
 ﻿@page "/Play/{GameID}/{PlayerX}/{PlayerO}"
 @inject IJSRuntime JSRuntime
 
-<canvas id="canvas" @ref="_canvas" width="450" height="450" @onclick="@CanvasClick"></canvas>
+<canvas id="canvas" @ref="_canvas" width="450" height="450" @onclick="CanvasClick"></canvas>
 
 @code 
 {
     [Parameter]
-    string GameID { get; set; }
+    public string GameID { get; set; }
 
     [Parameter]
-    string PlayerX { get; set; }
+    public string PlayerX { get; set; }
 
     [Parameter]
-    string PlayerO { get; set; }
+    public string PlayerO { get; set; }
 
     bool _loaded = false;
 
-    static ElementRef _canvas;
+    static ElementReference _canvas;
 
     static GameEngine _gameEngine;
 
-    void CanvasClick(UIMouseEventArgs e)
+    void CanvasClick(MouseEventArgs e)
     {
         Console.WriteLine("CanvasClick: X: " + e.ClientX + ", Y: " + e.ClientY);
     }
 
-    protected override async Task OnInitAsync()
+    protected override async Task OnInitializedAsync()
     {
-        await base.OnInitAsync();
-        Console.WriteLine("OnInitAsync");
+        await base.OnInitializedAsync();
+        Console.WriteLine("OnInitializedAsync");
 
         _gameEngine = new GameEngine();
         _gameEngine.SetPlayers(PlayerX, PlayerO);
@@ -39,9 +39,9 @@
         };
     }
 
-    protected override async Task OnAfterRenderAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await base.OnAfterRenderAsync();
+        await base.OnAfterRenderAsync(firstRender);
         if (!_loaded)
         {
             _loaded = true;

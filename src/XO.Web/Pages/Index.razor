@@ -1,24 +1,24 @@
 ﻿@page "/"
-@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
 
 <h1>Play XO</h1>
 
 <EditForm Model="@this">
-    <InputSelect id="playerX" @bind-Value="@PlayerX">
+    <InputSelect id="playerX" @bind-Value="PlayerX">
         <option value="Player">Human</option>
         <option value="Randomizer">Randomizer</option>
         <option value="LastMoveRandomizer">Last move nearby randomizer</option>
         <option value="Basic">Basic</option>
     </InputSelect>
     vs.
-    <InputSelect id="playerO" @bind-Value="@PlayerO">
+    <InputSelect id="playerO" @bind-Value="PlayerO">
         <option value="Player">Human</option>
         <option value="Randomizer">Randomizer</option>
         <option value="LastMoveRandomizer">Last move nearby randomizer</option>
         <option value="Basic">Basic</option>
     </InputSelect>
 
-    <button class="btn btn-primary" @onclick="@Play">Go!</button>
+    <button class="btn btn-primary" @onclick="Play">Go!</button>
 </EditForm>
 
 @code {
@@ -29,6 +29,6 @@
     private void Play()
     {
         var random = new Random();
-        UriHelper.NavigateTo($"Play/{random.Next(1, 1000)}/{PlayerX}/{PlayerO}");
+        NavigationManager.NavigateTo($"Play/{random.Next(1, 1000)}/{PlayerX}/{PlayerO}");
     }
 }
