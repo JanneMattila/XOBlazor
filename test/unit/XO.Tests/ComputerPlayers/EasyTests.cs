@@ -4,7 +4,7 @@ using XO.ComputerPlayers;
 namespace XO.Tests.ComputerPlayers
 {
     [TestClass]
-    public class BasicTests
+    public class EasyTests
     {
         private Easy _solver;
         private Board _board;

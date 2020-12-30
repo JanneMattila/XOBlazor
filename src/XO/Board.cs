@@ -24,6 +24,23 @@ namespace XO
             CleanUp(player, width, heigth);
         }
 
+        private Board(Player firstPlayer, Player currentPlayer, int width, int heigth, string state, string subState, Stack<Move> moves, Piece[][] pieces)
+        {
+            CleanUp(firstPlayer, width, heigth);
+
+            CurrentPlayer = currentPlayer;
+            _state = state;
+            _subState = subState;
+            _moves = new Stack<Move>(moves);
+            for (var row = 0; row < Height; row++)
+            {
+                for (var column = 0; column < Width; column++)
+                {
+                    _pieces[column][row] = pieces[column][row];
+                }
+            }
+        }
+
         public int Width { get; private set; }
 
         public int Height { get; private set; }
@@ -232,6 +249,11 @@ namespace XO
             return sb.ToString();
         }
 
+        public Board Clone()
+        {
+            return new Board(FirstPlayer, CurrentPlayer, Width, Height, _state, _subState, _moves, _pieces);
+        }
+
         public Piece GetPiece(int moveIndex)
         {
             return GetPiece(Move.FromIndex(this, moveIndex));
@@ -302,7 +324,7 @@ namespace XO
         public IEnumerable<Move> GetNearbyAvailableMoves()
         {
             var moves = new List<Move>();
-            var indexes = new List<int>();
+            var indexes = new HashSet<int>();
             var moveOffsets = new List<int[]>()
             {
                 new int[] { 1, 0 }, // East
@@ -328,10 +350,7 @@ namespace XO
                     if (GetPiece(column, row) == Piece.Empty)
                     {
                         var index = column + (row * Width);
-                        if (!indexes.Contains(index))
-                        {
-                            indexes.Add(index);
-                        }
+                        indexes.Add(index);
                     }
                 }
             }
@@ -340,7 +359,6 @@ namespace XO
             {
                 moves.Add(Move.FromIndex(this, index));
             }
-
             return moves;
         }
 
