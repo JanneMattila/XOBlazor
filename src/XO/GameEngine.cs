@@ -47,7 +47,7 @@ namespace XO
                 case "LastMoveRandomizer":
                     return new LastMoveRandomizer();
                 case "Basic":
-                    return new Basic();
+                    return new Easy();
                 default:
                     return new HumanPlayer();
             }

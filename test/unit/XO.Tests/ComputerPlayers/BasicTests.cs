@@ -6,14 +6,14 @@ namespace XO.Tests.ComputerPlayers
     [TestClass]
     public class BasicTests
     {
-        private Basic _solver;
+        private Easy _solver;
         private Board _board;
 
         [TestInitialize]
         public void TestInitialize()
         {
             _board = new Board();
-            _solver = new Basic();
+            _solver = new Easy();
         }
 
         [TestMethod]
