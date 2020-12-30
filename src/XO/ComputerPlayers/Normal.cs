@@ -72,6 +72,13 @@ namespace XO.ComputerPlayers
                 {
                     var b = solve.Board.Clone();
                     var evaluationResult = b.MakeMove(move.ToInt());
+
+                    if (evaluationResult.HasWinningStraight())
+                    {
+                        Console.WriteLine($"Level: {level}, Playing move with 'HasWinningStraight', {stopwatch.Elapsed.TotalSeconds:0.0} seconds");
+                        return move;
+                    }
+
                     var solve2 = new SolveData()
                     {
                         Level = solve.Level + 1,
