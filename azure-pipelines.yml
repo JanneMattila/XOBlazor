@@ -15,7 +15,7 @@ variables:
 
 name: 1.0.$(Rev:r)
 steps:
-- task: DotNetCoreInstaller@0
+- task: UseDotNet@2
   displayName: 'Install .NET Core SDK'
   inputs:
     version: '5.0.101'
@@ -41,7 +41,7 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: app'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/XO.Web/dist/'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/wwwroot/'
     ArtifactName: app
 
 #- task: Docker@1
